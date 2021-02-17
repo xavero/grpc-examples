@@ -2,28 +2,43 @@ import { useState } from 'react';
 
 import './App.css';
 
-import { GreeterClient } from './grpc/greet_grpc_web_pb';
-import { HelloRequest, HelloReply } from './grpc/greet_pb';
+import { GreeterPromiseClient } from './grpc/greet_grpc_web_pb';
+import { HelloRequest } from './grpc/greet_pb';
 
-const grpcClient = new GreeterClient('https://localhost:5001', null, null);
+const authInterceptor = {
+  intercept: (request, invoker) => {
+    const metadata = request.getMetadata()
+    metadata.Authorization = 'Bearer --xyz--'
+    return invoker(request)
+  }
+}
+
+const options = {
+  unaryInterceptors: [authInterceptor],
+  streamInterceptors: [authInterceptor]
+}
+
+const grpcClientAync = new GreeterPromiseClient('https://localhost:5001', null, options);
 
 function App() {
 
-  const callGrpcService = () => {
+  let [{ requestText, replyText }, setState] = useState({ requestText: "John Doe", replyText: null });
+
+  const callGrpcService = async () => {
     const request = new HelloRequest();
     request.setName(requestText);
 
-    grpcClient.sayHello(request, {}, (err, response) => {
-        replyText = err || response.getMessage();
-
-        setState({requestText, replyText});
-    });
+    try {
+      const response = await grpcClientAync.sayHello(request);
+      setState({ requestText, replyText: response.getMessage() });
+    }
+    catch(err) {
+      setState({ requestText, replyText: `Error: ${err.code} - ${err.message}` });
+    }
   }
 
-  let [{requestText, replyText}, setState] = useState({ requestText: "John Doe", replyText: null  });
-  
   const updateRequestText = (value) => {
-    setState({requestText: value, replyText});
+    setState({ requestText: value, replyText });
   };
 
   return (
