@@ -105,8 +105,8 @@ python -m grpc_tools.protoc -I../../protos \
 - https://aka.ms/grpcdocs
 - https://aka.ms/grpcexamples
 - https://docs.microsoft.com/en-gb/aspnet/core/grpc/protobuf
+- https://github.com/grpc-ecosystem/awesome-grpc
 - Demo com o James Newton-King: 
   https://www.youtube.com/watch?v=EJ8M2Em5Zzc
-- Blazor Demo: 
   http://grpcblazorperf.azurewebsites.net/
   
