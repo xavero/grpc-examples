@@ -1,0 +1,14 @@
+version: 2
+updates:
+  - package-ecosystem: "nuget"
+    directory: "/demos/net5/GrpcDemo"
+    schedule:
+      interval: "weekly"
+  - package-ecosystem: "npm"
+    directory: "/demos/grpc-browser"
+    schedule:
+      interval: "weekly"
+  - package-ecosystem: "npm"
+    directory: "/demos/react-grpc"
+    schedule:
+      interval: "weekly"
