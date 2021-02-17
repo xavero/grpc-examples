@@ -28,6 +28,10 @@ A high performance, open source universal RPC framework
 
   Desenvolvido em 2015, mas baseado em outra tecnologia amplamenta usada dentro do Google
 
+ - Peformance: Mensagens binárias compactas, serialização rápida
+ 
+ - Produtividade: Ferramentas que geram o código do client e server, esconde a complexidade da comunicação.
+
   Outros frameworks RPC: WCF, Thrift, JSON-RPC
 -->
 
@@ -42,10 +46,7 @@ A high performance, open source universal RPC framework
 | Suporte limitado no browser | Suporte nativo no browser        |
 
 <!-- 
- - Peformance: Mensagens binárias compactas, serialização rápida
  
- - Produtividade: Ferramentas que geram o código do client e server, esconde a complexidade da comunicação.
-
  - Tipos de operações:
     Unary
     Client Streaming
