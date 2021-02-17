@@ -1,0 +1,79 @@
+syntax = "proto3";
+
+// https://developers.google.com/protocol-buffers/docs/reference/csharp/namespace/google/protobuf/well-known-types
+import "google/protobuf/Timestamp.proto";
+import "google/protobuf/Empty.proto";
+import "google/protobuf/Duration.proto";
+import "google/protobuf/Any.proto";
+import "google/protobuf/Wrappers.proto"; // Nullables
+
+option csharp_namespace = "GrpcDemo";
+
+service Demo {
+    
+    rpc Query(QueryRequest) returns (QueryResponse);
+
+    rpc SendData(stream StreamMessage) returns (google.protobuf.Empty);
+
+    rpc Receive(google.protobuf.Empty) returns (stream StreamMessage);
+
+    rpc Bidirectional(stream StreamMessage) returns (stream StreamMessage);
+
+    rpc OtherTypesExample(google.protobuf.Empty) returns (OthersTypesMessage);
+}
+
+message QueryRequest {
+    string name_part = 1;
+}
+
+message QueryResponse {
+    repeated Person persons = 1;
+}
+
+enum PhoneType {
+    MOBILE = 0;
+    HOME = 1;
+    WORK = 2;
+}
+
+message PhoneNumber {
+    string number = 1;
+    PhoneType type = 2;
+}
+
+message Person {
+    int32 id = 1;
+    string full_name = 2;
+    repeated PhoneNumber phones = 3;
+    google.protobuf.Timestamp last_updated = 4; // DateTime - Sempre em Utc
+    double balance = 5;
+    bool enabled = 6;
+    map<string, string> attributes = 7;
+}
+
+message StreamMessage {
+    int32 message_number = 1;
+    string text = 2;
+}
+
+message Error {
+    int32 code = 1;
+    string text = 2;
+}
+
+message OthersTypesMessage {
+    google.protobuf.Duration interval = 1; // C# TimeSpan
+
+    oneof result {
+        Error error = 2;
+        Person person = 3;
+    }
+
+    google.protobuf.Int32Value error_count = 4; // Nullable<int> / int? 
+    
+    google.protobuf.StringValue error_stack = 5; // string que pode ser null
+
+    bytes image = 6;    // array de bytes. Pode ser usado para dados binários pequenos
+
+    google.protobuf.Any anything = 7; // 
+}
