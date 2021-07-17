@@ -29,7 +29,7 @@ jobs:
       - name: Generate release notes with Gren
         run: npx gren changelog --generate --changelog-filename=${{ github.workspace }}/RELEASE_NOTES.md --data-source=commits --override --debug
         env:
-          GREN_GITHUB_TOKEN: ${{ secrets.GREN_GITHUB_TOKEN }}
+          GREN_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Echo release notes contents
         run: cat ${{ github.workspace }}/RELEASE_NOTES.md
