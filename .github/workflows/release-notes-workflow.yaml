@@ -1,0 +1,22 @@
+name: test-github-actions
+on: 
+  pull_request:
+    types:
+      - closed
+  push:
+    branches:
+      - "main"
+
+jobs:
+  generate-release-notes:
+    if: ${{ (github.event_name == 'push' || github.event.pull_request.merged) && github.base_ref == 'main' }}
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: rfennell/ReleaseNotesAction@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        templateFile: '${{ github.workspace }}//.github/release-notes-template.md'
+        outputfile: '${{ github.workspace }}//releasenotes.md'
+        # extensionsFile: '${{ github.workspace }}//customextensions.js'
