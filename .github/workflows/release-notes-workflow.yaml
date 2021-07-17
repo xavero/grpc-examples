@@ -27,7 +27,7 @@ jobs:
           node-version: '14.x'
 
       - name: Generate release notes with Gren
-        run: npx gren changelog --generate --changelog-filename=${{ github.workspace }}/RELEASE_NOTES.md --data-source=pr --override --debug
+        run: npx gren changelog --generate --changelog-filename=${{ github.workspace }}/RELEASE_NOTES.md --data-source=commits --override --debug
         env:
           GREN_GITHUB_TOKEN: ${{ secrets.GREN_GITHUB_TOKEN }}
 
