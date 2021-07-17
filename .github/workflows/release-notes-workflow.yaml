@@ -1,28 +1,73 @@
-name: test-github-actions
-
-on: 
+on:
   push:
-    # branches:
-    #   - "main"
     tags:
-      - 'v*.*.*'
+      - 'v*'
+
+name: Create Release
 
 jobs:
-  generate-release-notes:
-    # if: ${{ github.event.pull_request.merged && github.base_ref == 'main' }}
+  release:
+    name: Create Release
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout Code
-      uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
 
-    - name: Generate Release Notes File
-      uses: rfennell/ReleaseNotesAction@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        templateFile: '${{ github.workspace }}/.github/release-notes-template.md'
-        outputfile: '${{ github.workspace }}/releasenotes.md'
-        # extensionsFile: '${{ github.workspace }}//customextensions.js'
+      - name: Get Previous Tag
+        run: |
+          PREV_TAG=$(git describe --abbrev=0 --tags "${{ github.ref }}^")
+          echo "::set-env name=baseRef::$PREV_TAG"
+
+      - name: Generate Changelog
+        id: generate_changelog
+        uses: nblagoev/pull-release-notes-action@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          base-ref: ${{ env.baseRef }}
+          head-ref: ${{ github.ref }}
+
+      - name: Create Release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          body: ${{steps.generate_changelog.outputs.result}}
+          draft: true
+
+
+
+
+
+# name: test-github-actions
+
+# on: 
+#   push:
+#     # branches:
+#     #   - "main"
+#     tags:
+#       - 'v*.*.*'
+
+# jobs:
+#   generate-release-notes:
+#     # if: ${{ github.event.pull_request.merged && github.base_ref == 'main' }}
+#     runs-on: ubuntu-latest
+#     steps:
+#     - name: Checkout Code
+#       uses: actions/checkout@v2
+
+#     - name: Generate Release Notes File
+#       uses: rfennell/ReleaseNotesAction@v1
+#       env:
+#         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#       with:
+#         templateFile: '${{ github.workspace }}/.github/release-notes-template.md'
+#         outputfile: '${{ github.workspace }}/releasenotes.md'
+#         # extensionsFile: '${{ github.workspace }}//customextensions.js'
     
-    - name: Echo release notes contents
-      run: cat ${{ github.workspace }}/releasenotes.md
+#     - name: Echo release notes contents
+#       run: cat ${{ github.workspace }}/releasenotes.md
