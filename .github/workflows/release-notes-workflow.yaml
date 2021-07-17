@@ -1,8 +1,6 @@
 name: test-github-actions
 on: 
   release:
-    types:
-      - "created"
   # pull_request:
   #   types:
   #     - closed
