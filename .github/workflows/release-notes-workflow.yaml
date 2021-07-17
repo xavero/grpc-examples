@@ -21,26 +21,43 @@ jobs:
           echo "baseRef=$PREV_TAG" >> $GITHUB_ENV
 #          echo "::set-env name=baseRef::$PREV_TAG"
 
-      - name: Generate Changelog
-        id: generate_changelog
-        uses: nblagoev/pull-release-notes-action@v1.0.2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Use Node.js
+        uses: actions/setup-node@v2
         with:
-          base-ref: ${{ env.baseRef }}
-          head-ref: ${{ github.ref }}
+          node-version: '14.x'
 
-      - name: Create Release
-        uses: actions/create-release@v1
+      - name: Generate release notes with Gren
+        run: npx gren release --draft --data-source=pr --override --debug
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
-          body: ${{steps.generate_changelog.outputs.result}}
-          draft: true
+          GREN_GITHUB_TOKEN: ${{ secrets.GREN_GITHUB_TOKEN }}
 
+      # - name: Generate Changelog
+      #   id: generate_changelog
+      #   uses: nblagoev/pull-release-notes-action@v1.0.2
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #   with:
+      #     base-ref: ${{ env.baseRef }}
+      #     head-ref: ${{ github.ref }}
 
+      # - name: Create Release
+      #   uses: actions/create-release@v1
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #   with:
+      #     tag_name: ${{ github.ref }}
+      #     release_name: Release ${{ github.ref }}
+      #     body: ${{steps.generate_changelog.outputs.result}}
+      #     draft: true
+
+      # - name: Release
+      #   uses: softprops/action-gh-release@v1
+      #   if: startsWith(github.ref, 'refs/tags/')
+      #   with:
+      #     body_path: ${{ github.workflow }}-CHANGELOG.txt
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #     GITHUB_REPOSITORY: my_gh_org/my_gh_repo
 
 
 
