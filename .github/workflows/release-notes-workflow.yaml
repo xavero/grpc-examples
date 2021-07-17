@@ -1,15 +1,18 @@
 name: test-github-actions
 on: 
-  pull_request:
+  release:
     types:
-      - closed
-  push:
-    branches:
-      - "main"
+      - "created"
+  # pull_request:
+  #   types:
+  #     - closed
+  # push:
+  #   branches:
+  #     - "main"
 
 jobs:
   generate-release-notes:
-    if: ${{ (github.event_name == 'push' || github.event.pull_request.merged) && github.base_ref == 'main' }}
+    # if: ${{ github.event.pull_request.merged && github.base_ref == 'main' }}
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
