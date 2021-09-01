@@ -1,0 +1,44 @@
+name: .NET
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    
+    permissions:
+      security-events: write
+      
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v2
+      
+    - name: Initialize CodeQL
+      uses: github/codeql-action/init@v1
+      with:
+       languages: javascript, csharp
+      
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 5.0.x
+        
+    - name: Restore dependencies
+      working-directory: ./demos/net5/GrpcDemo
+      run: dotnet restore
+      
+    - name: Build
+      working-directory: ./demos/net5/GrpcDemo
+      run: dotnet build --no-restore -c Release --verbosity normal
+      
+    - name: Test
+      working-directory: ./demos/net5/GrpcDemo
+      run: dotnet test --no-build -c Release --verbosity normal
+    
+    - name: Perform CodeQL Analysis
+      uses: github/codeql-action/analyze@v1
