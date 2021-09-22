@@ -7,6 +7,8 @@ import "google/protobuf/Duration.proto";
 import "google/protobuf/Any.proto";
 import "google/protobuf/Wrappers.proto"; // Nullables
 
+import "google/protobuf/field_mask.proto";
+
 option csharp_namespace = "GrpcDemo";
 
 service Demo {
@@ -20,6 +22,12 @@ service Demo {
     rpc Bidirectional(stream StreamMessage) returns (stream StreamMessage);
 
     rpc OtherTypesExample(google.protobuf.Empty) returns (OthersTypesMessage);
+
+    rpc FieldMaskExample(FieldMaskExampleRequest) returns (Person);
+}
+
+message FieldMaskExampleRequest {
+    google.protobuf.FieldMask field_mask = 1;
 }
 
 message QueryRequest {
@@ -49,6 +57,7 @@ message Person {
     double balance = 5;
     bool enabled = 6;
     map<string, string> attributes = 7;
+    Person child = 8;
 }
 
 message StreamMessage {

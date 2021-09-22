@@ -7,6 +7,7 @@ using GrpcDemo;
 using Microsoft.Extensions.Logging;
 using System.IO;
 using System.Linq;
+using Google.Protobuf.WellKnownTypes;
 
 namespace GrpcClientHosted
 {
@@ -24,6 +25,8 @@ namespace GrpcClientHosted
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
+            await FieldMaskExample(stoppingToken);
+
             await UnaryExample(stoppingToken);
 
             await Task.Delay(5000, stoppingToken);
@@ -41,6 +44,30 @@ namespace GrpcClientHosted
             await Task.Delay(5000, stoppingToken);
 
             await OthersFieldsExample(stoppingToken);
+        }
+
+        private static string NameOfField(int fieldNumber) => Person.Descriptor.FindFieldByNumber(fieldNumber).Name;
+
+        private async Task FieldMaskExample(CancellationToken stoppingToken)
+        {
+            using (_logger.BeginScope("Starting FieldMaskExample"))
+            {
+                var fields = new string[] {
+                    NameOfField(Person.FullNameFieldNumber),
+                    NameOfField(Person.BalanceFieldNumber),
+                    $"{NameOfField(Person.ChildFieldNumber)}.{NameOfField(Person.IdFieldNumber)}",
+                    $"{NameOfField(Person.ChildFieldNumber)}.{NameOfField(Person.FullNameFieldNumber)}"
+                };
+
+                var request = new GrpcDemo.FieldMaskExampleRequest {
+                    // FieldMask = FieldMask.FromFieldNumbers<Person>(Person.FullNameFieldNumber, Person.BalanceFieldNumber)
+                    FieldMask = FieldMask.FromString<Person>(string.Join(',', fields))
+                };
+
+                var person = await _client.FieldMaskExampleAsync(request, cancellationToken: stoppingToken);
+
+                _logger.LogInformation($"Person from server: {person.Id} - {person.FullName} - {person.Balance} - {person.Child.Id} - {person.Child.FullName} - {person.LastUpdated?.ToDateTime()}");
+            }
         }
 
         /// <summary>

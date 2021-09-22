@@ -18,6 +18,31 @@ namespace GrpcServer
             _logger = logger;
         }
 
+        public override Task<Person> FieldMaskExample(FieldMaskExampleRequest request, ServerCallContext context)
+        {
+            var person = new Person
+            {
+                Id = 1,
+                FullName = "John Doe",
+                Balance = 5000,
+                Enabled = true,
+                LastUpdated = Timestamp.FromDateTime(DateTime.Parse("2020-01-01 00:00:00").ToUniversalTime()),
+                Child = new Person { 
+                    Id = 10,
+                    FullName = "John Child",
+                    Balance = -3000,
+                    Enabled = true,
+                    LastUpdated = Timestamp.FromDateTime(DateTime.Parse("2020-01-01 00:00:00").ToUniversalTime()),
+                }
+            };
+
+            var response = new Person();
+
+            request.FieldMask.Merge(person, response);
+
+            return Task.FromResult(response);
+        }
+
         public override async Task<QueryResponse> Query(QueryRequest request, ServerCallContext context)
         {
             var response = new QueryResponse();
