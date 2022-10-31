@@ -11,7 +11,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "grpc-web": "^1.2.1"
+    "grpc-web": "^1.4.2"
   },
   "devDependencies": {
     "google-protobuf": "^3.17.3",
