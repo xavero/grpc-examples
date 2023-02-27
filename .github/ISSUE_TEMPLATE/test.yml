@@ -1,0 +1,14 @@
+name: Test Issue
+description: Test description
+title: "[Test]: "
+about: "About Test"
+body:
+  - type: dropdown
+    id: application
+    attributes:
+      label: Aplicação
+      description: Quais aplicações precisam subir?
+      multiple: true
+      options:
+        - A
+        - B
