@@ -16,17 +16,17 @@ jobs:
       
     steps:
     - name: Checkout Code
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
       
     - name: Initialize CodeQL
-      uses: github/codeql-action/init@v1
+      uses: github/codeql-action/init@v3
       with:
        languages: javascript, csharp
       
     - name: Setup .NET
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: 5.0.x
+        dotnet-version: 8.0.x
         
     - name: Restore dependencies
       working-directory: ./demos/net5/GrpcDemo
@@ -41,4 +41,4 @@ jobs:
       run: dotnet test --no-build -c Release --verbosity normal
     
     - name: Perform CodeQL Analysis
-      uses: github/codeql-action/analyze@v1
+      uses: github/codeql-action/analyze@v3
